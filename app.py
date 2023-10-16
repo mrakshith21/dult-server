@@ -50,8 +50,20 @@ class ProductData(Characteristic):
                 ["read"], service)
         self.add_descriptor(ProductDataDescriptor(self))
 
-    def ReadValue(self, options):
+    def Get_Product_Data(self, options):
         print("Get Product Data Request")
+        return self.WriteValue(options)
+
+    def Get_Product_Data_Response(self, options):
+        print("Server responding to Product Data Request")
+        return self.IndicateValue(options)
+
+    def WriteValue(self, options):
+        print("Write request over Product Data")
+        return self.Get_Product_Data_Response(options)
+    
+    def IndicateValue(self, options):
+        print("Indication response to request for Product Data")
         return encode(self.product_data)
 
 class ProductDataDescriptor(Descriptor):
