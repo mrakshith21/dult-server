@@ -48,24 +48,20 @@ class ProductData(Characteristic):
 
         Characteristic.__init__(
                 self, self.PRODUCT_DATA_CHARACTERISTIC_UUID,
-                ["read"], service)
+                ["read", "write", "indicate"], service)
         self.add_descriptor(ProductDataDescriptor(self))
 
-    def WriteValue(self, options):
-        print("Write request over Product Data")
-        return self.Get_Product_Data(options)
-    
-    def IndicateValue(self, options):
-        print("Indication response to request for Product Data")
-        return self.Get_Product_Data_Response(options)
-
-    def Get_Product_Data(self, options):
-        print("Get Product Data Request")
-        return self.IndicateValue(options)
-
-    def Get_Product_Data_Response(self, options):
-        print("Server responding to Product Data Request")
+    def ReadValue(self, options):
+        print("[Read] Get Product Data Request")
         return encode(self.product_data)
+    
+    def IndicateValue(self):
+        print("[Indication] Get Product Data Response")
+        self.PropertiesChanged(GATT_CHRC_IFACE, {'Value': encode(self.product_data)}, [])
+
+    def WriteValue(self, value, options):
+        print("[Write] Get Product Data Request")
+        self.IndicateValue()
 
 class ProductDataDescriptor(Descriptor):
     PRODUCT_DATA_DESCRIPTOR_UUID = "2901"
@@ -89,12 +85,20 @@ class ManufacturerName(Characteristic):
 
         Characteristic.__init__(
                 self, self.MANUFACTURER_NAME_CHARACTERISTIC_UUID,
-                ["read"], service)
+                ["read", "write", "indicate"], service)
         self.add_descriptor(ManufacturerNameDescriptor(self))
 
     def ReadValue(self, options):
-        print("Get Manufacturer Name Request")
+        print("[Read] Get Manufacturer Name Request")
         return encode(self.manufacturer_name)
+    
+    def IndicateValue(self):
+        print("[Indication] Get Manufacturer Name Response")
+        self.PropertiesChanged(GATT_CHRC_IFACE, {'Value': encode(self.manufacturer_name)}, [])
+
+    def WriteValue(self, value, options):
+        print("[Write] Get Manufacturer Name Reqest")
+        self.IndicateValue()
 
 class ManufacturerNameDescriptor(Descriptor):
     MANUFACTURER_NAME_DESCRIPTOR_UUID = "2901"
@@ -113,15 +117,23 @@ class SerialNumberLookup(Characteristic):
     SERIAL_NUMBER_LOOKUP_CHARACTERISTIC_UUID = "00000404-0000-1000-8000-00805F9B34FB"
 
     def __init__(self, service):
-        self.serial_number = "Number"
+        self.serial_number = "83jo87379rdh"
         Characteristic.__init__(
-                self, self.MANUFACTURER_NAME_CHARACTERISTIC_UUID,
-                ["read"], service)
+                self, self.SERIAL_NUMBER_LOOKUP_CHARACTERISTIC_UUID,
+                ["read", "write", "indicate"], service)
         self.add_descriptor(SerialNumberLookupDescriptor(self))
 
     def ReadValue(self, options):
         print("Serial Number Lookup")
         return encode(self.manufacturer_name)
+    
+    def IndicateValue(self):
+        print("[Indication] Get Serial Number Response")
+        self.PropertiesChanged(GATT_CHRC_IFACE, {'Value': encode(self.serial_number)}, [])
+
+    def WriteValue(self, value, options):
+        print("[Write] Get Serial Number Request")
+        self.IndicateValue()
 
 class SerialNumberLookupDescriptor(Descriptor):
     SERIAL_NUMBER_LOOKUP_DESCRIPTOR_UUID = "2901"
@@ -142,16 +154,23 @@ class ModelName(Characteristic):
     def __init__(self, service):
         Characteristic.__init__(
                 self, self.MODEL_NAME_CHARACTERISTIC_UUID,
-                ['read'],
+                ["read", "write", "indicate"],
                 service)
         self.notifying = False
         self.model_name = "Tile Slim 2020"
-
         self.add_descriptor(ModelNameDescriptor(self))
 
     def ReadValue(self, options):
-        print("Get Model Name Request")
+        print("[Read] Get Model Name Request")
         return encode(self.model_name)
+    
+    def IndicateValue(self):
+        print("[Indication] Get Model Name Response")
+        self.PropertiesChanged(GATT_CHRC_IFACE, {'Value': encode(self.model_name)}, [])
+
+    def WriteValue(self, value, options):
+        print("[Write] Get Model Name Request")
+        self.IndicateValue()
 
 class ModelNameDescriptor(Descriptor):
     MODEL_NAME_DESCRIPTOR_UUID = "2901"
@@ -172,15 +191,23 @@ class AccessoryCategory(Characteristic):
     def __init__(self, service):
         Characteristic.__init__(
                 self, self.ACCESSORY_CATEGORY_CHARACTERISTIC_UUID,
-                ['read'],
+                ["read", "write", "indicate"],
                 service)
         self.notifying = False
         self.accessory_category = "1"
         self.add_descriptor(AccessoryCategoryDescriptor(self))
 
     def ReadValue(self, options):
-        print("Get Accessory Category Request")
+        print("[Read] Get Accessory Category Request")
         return encode(self.accessory_category)
+    
+    def IndicateValue(self):
+        print("[Indication] Get Accessory Category Response")
+        self.PropertiesChanged(GATT_CHRC_IFACE, {'Value': encode(self.accessory_category)}, [])
+
+    def WriteValue(self, value, options):
+        print("[Write] Get Accessory Category Request")
+        self.IndicateValue()
 
 class AccessoryCategoryDescriptor(Descriptor):
     ACCESSORY_CATEGORY_DESCRIPTOR_UUID = "2901"
@@ -201,15 +228,23 @@ class AccessoryCapabilities(Characteristic):
     def __init__(self, service):
         Characteristic.__init__(
                 self, self.ACCESSORY_CAPABILITIES_CHARACTERISTIC_UUID,
-                ['read'],
+                ["read", "write", "indicate"],
                 service)
         self.notifying = False
         self.accessory_capabilities = "11"
         self.add_descriptor(AccessoryCapabilitiesDescriptor(self))
 
     def ReadValue(self, options):
-        print("Get Accessory Capabilities Request")
+        print("[Read] Get Accessory Capabilities Request")
         return encode(self.accessory_capabilities)
+    
+    def IndicateValue(self):
+        print("[Indication] Get Accessory Capabilities Response")
+        self.PropertiesChanged(GATT_CHRC_IFACE, {'Value': encode(self.accessory_capabilities)}, [])
+
+    def WriteValue(self, value, options):
+        print("[Write] Get Accessory Capabilities Request")
+        self.IndicateValue()
 
 class AccessoryCapabilitiesDescriptor(Descriptor):
     ACCESSORY_CAPABILITIES_DESCRIPTOR_UUID = "2901"
@@ -254,7 +289,7 @@ class SoundStart(Characteristic):
         return False
 
     def WriteValue(self, value, options):
-        print("Sound Start request")
+        print("Sound Start Request")
         response = self.start_sound()
         if not response:
             print("Error while starting sound, might be already playing")        
