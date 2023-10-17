@@ -35,6 +35,7 @@ class NonOwnerService(Service):
         self.add_characteristic(ModelName(self))
         self.add_characteristic(AccessoryCapabilities(self))
         self.add_characteristic(AccessoryCategory(self))
+        self.add_characteristic(SerialNumberLookup(self))
         self.add_characteristic(SoundStart(self))
         self.add_characteristic(SoundStop(self))
 
@@ -108,6 +109,32 @@ class ManufacturerNameDescriptor(Descriptor):
     def ReadValue(self, options):
         return encode(self.MANUFACTURER_NAME_DESCRIPTOR_VALUE)
 
+class SerialNumberLookup(Characteristic):
+    SERIAL_NUMBER_LOOKUP_CHARACTERISTIC_UUID = "00000404-0000-1000-8000-00805F9B34FB"
+
+    def __init__(self, service):
+        self.serial_number = "Number"
+        Characteristic.__init__(
+                self, self.MANUFACTURER_NAME_CHARACTERISTIC_UUID,
+                ["read"], service)
+        self.add_descriptor(SerialNumberLookupDescriptor(self))
+
+    def ReadValue(self, options):
+        print("Serial Number Lookup")
+        return encode(self.manufacturer_name)
+
+class SerialNumberLookupDescriptor(Descriptor):
+    SERIAL_NUMBER_LOOKUP_DESCRIPTOR_UUID = "2903"
+    SERIAL_NUMBER_LOOKUP_DESCRIPTOR_VALUE = "Serial Number"
+
+    def __init__(self, characteristic):
+        Descriptor.__init__(
+                self, self.SERIAL_NUMBER_LOOKUP_DESCRIPTOR_UUID,
+                ["read"],
+                characteristic)
+
+    def ReadValue(self, options):
+        return encode(self.SERIAL_NUMBER_LOOKUP_DESCRIPTOR_VALUE)
 
 class ModelName(Characteristic):
     MODEL_NAME_CHARACTERISTIC_UUID = "00000308-0000-1000-8000-00805F9B34FB"
