@@ -97,7 +97,7 @@ class ManufacturerName(Characteristic):
         return encode(self.manufacturer_name)
 
 class ManufacturerNameDescriptor(Descriptor):
-    MANUFACTURER_NAME_DESCRIPTOR_UUID = "2902"
+    MANUFACTURER_NAME_DESCRIPTOR_UUID = "2901"
     MANUFACTURER_NAME_DESCRIPTOR_VALUE = "Manufacturer Name"
 
     def __init__(self, characteristic):
@@ -124,7 +124,7 @@ class SerialNumberLookup(Characteristic):
         return encode(self.manufacturer_name)
 
 class SerialNumberLookupDescriptor(Descriptor):
-    SERIAL_NUMBER_LOOKUP_DESCRIPTOR_UUID = "2903"
+    SERIAL_NUMBER_LOOKUP_DESCRIPTOR_UUID = "2901"
     SERIAL_NUMBER_LOOKUP_DESCRIPTOR_VALUE = "Serial Number"
 
     def __init__(self, characteristic):
